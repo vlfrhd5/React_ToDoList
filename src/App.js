@@ -58,7 +58,7 @@ class App extends React.Component{
       <div className="header">To Do List</div>
       <div className="input_area">
         <TextField label="제목" placeholder="제목을 입력하세요." value={this.state.title} size="normal"  margin="normal" onChange={this.titleChange} fullWidth required/>
-        <TextField label="상세내용" size="normal"value={this.state.content} margin="normal"  onChange={this.contentChange} fullWidth multiline/>
+        <TextField label="상세내용" size="normal" value={this.state.content} margin="normal"  onChange={this.contentChange} fullWidth multiline/>
         <KeyboardDatePicker
           disableToolbar
           variant="inline"
