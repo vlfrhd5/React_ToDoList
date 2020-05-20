@@ -62,7 +62,7 @@ class App extends React.Component{
         <KeyboardDatePicker
           disableToolbar
           variant="inline"
-          margin="nomarl"
+          margin="normal"
           format="yyyy/MM/DD"
           label="시작예정일"
           onChange={this.StartDateChange}
@@ -72,7 +72,7 @@ class App extends React.Component{
           }}
         />
         <KeyboardTimePicker
-          margin="nomarl"
+          margin="normal"
           label="시작시간"
           variant="inline"
           onChange={this.StartTimeChange}
@@ -84,7 +84,7 @@ class App extends React.Component{
         <KeyboardDatePicker
           disableToolbar
           variant="inline"
-          margin="nomarl"
+          margin="normal"
           format="yyyy/MM/DD"
           label="종료예정일"
           onChange={this.EndDateChange}
@@ -94,7 +94,7 @@ class App extends React.Component{
           }}
         />
         <KeyboardTimePicker
-          margin="nomarl"
+          margin="normal"
           label="종료시간"
           variant="inline"
           onChange={this.EndTimeChange}
