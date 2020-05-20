@@ -105,7 +105,7 @@ class App extends React.Component{
           
         />
       </div>
-      
+
       <div className="list_area">리스트 영역</div>
       <Typography variant="body2" color="textSecondary" align="center">
         {'Copyright ⓒ 전필원'+new Date().getFullYear()+'.'}
