@@ -1,117 +1,102 @@
 import React from 'react';
 import './App.css';
-import {TextField,Typography} from '@material-ui/core';
-import {KeyboardTimePicker, KeyboardDatePicker} from '@material-ui/pickers';
+import { Typography, List, ListItem, ListItemText } from "@material-ui/core";
+import InputForm from './components/inputform'
+import moment from 'moment';
 
 class App extends React.Component{
-  constructor(props){
-    super(props);
-    this.state = {
-      title:"",
-      content:"",
-      startDate:null,
-      startTime:null,
-      endDate:null,
-      endTime:null,
+    constructor(props) {
+      super(props);
+      this.localStorage = window.localStorage;
+      const getItem = localStorage.getItem("todolist_state");
+      if(getItem){
+        this.state = JSON.parse(getItem);
+      }else{
+      this.state = {
+        todoList: [],
+      }
     }
   }
-  titleChange = (e) => {
-    this.setState({
-      title: e.target.value
-    })
-  }
-  contentChange = (e) => {
-    this.setState({
-      content: e.target.value
-    })
-  }
-  StartDateChange = (KeyboardDatePicker) => {
-    this.setState({
-      startDate:KeyboardDatePicker._d 
-    })
-  }
-  StartTimeChange = (KeyboardTimePicker) => {
-    this.setState({
-      startTime: KeyboardTimePicker._d
-    })
-  }
-
-  EndDateChange = (KeyboardDatePicker) => {
-    this.setState({
-      EndDate: KeyboardDatePicker._d
-    })
-  }
-
-  EndTimeChange = (KeyboardTimePicker) => {
-    this.setState({
-      EndTime: KeyboardTimePicker._d
-    })
-  }
   
+    // saveTodoList() {
+    //   const nowList = this.state.todoList;
+    //   const {
+    //     title, content, startDate, startTime, endDate, endTime,
+    //   } = this.state;
+    //   nowList.push({
+    //     title, content, startDate, startTime, endDate, endTime,
+    //   });
+  
+    //   this.setState(
+    //     {
+    //       todoList: nowList,
+    //     });
+    // }
+
+    addTodoList(data){
+      const nowList = this.state.todoList;
+      nowList.push(data);
+      this.setState({
+        todoList: nowList,
+      }, ()=> {
+        const stringState = JSON.stringify(this.state)
+        localStorage.setItem("todolist_state", stringState);
+      });
+    }
+    
+
   render(){
-    console.log("시작예정일: " + this.state.startDate);
-    console.log("시작시간: " + this.state.startTime);
-    console.log("종료예정일: " + this.state.EndDate);
-    console.log("종료시간: " + this.state.EndTime);
+    const { todoList } = this.state;
   return (
     <div className="App">
-      <div className="header">To Do List</div>
-      <div className="input_area">
-        <TextField label="제목" placeholder="제목을 입력하세요." value={this.state.title} size="normal"  margin="normal" onChange={this.titleChange} fullWidth required/>
-        <TextField label="상세내용" size="normal" value={this.state.content} margin="normal"  onChange={this.contentChange} fullWidth multiline/>
-        <KeyboardDatePicker
-          disableToolbar
-          variant="inline"
-          margin="normal"
-          format="yyyy/MM/DD"
-          label="시작예정일"
-          onChange={this.StartDateChange}
-          style={{width:'50%'}}
-          KeyboardButtonProps={{
-            'aria-label':'change date',
-          }}
-        />
-        <KeyboardTimePicker
-          margin="normal"
-          label="시작시간"
-          variant="inline"
-          onChange={this.StartTimeChange}
-          style={{width:'50%'}}
-          KeyboardButtonProps={{
-            'aria-label':'change time',
-          }}
-        />
-        <KeyboardDatePicker
-          disableToolbar
-          variant="inline"
-          margin="normal"
-          format="yyyy/MM/DD"
-          label="종료예정일"
-          onChange={this.EndDateChange}
-          style={{width:'50%'}}
-          KeyboardButtonProps={{
-            'aria-label':'change date',
-          }}
-        />
-        <KeyboardTimePicker
-          margin="normal"
-          label="종료시간"
-          variant="inline"
-          onChange={this.EndTimeChange}
-          style={{width:'50%'}}
-          KeyboardButtonProps={{
-            'aria-label':'change time',
-          }}
-          
-        />
-      </div>
+      <div className="header">TODO LIST</div>
+    <InputForm addTodoList={this.addTodoList.bind(this)} />
+    <div className="list_area">
+    <List>
+            { todoList.map((todoItem,idx) => {
+              let {
+                title, startDate, startTime, endDate, endTime
+              } = todoItem;
 
-      <div className="list_area">리스트 영역</div>
-      <Typography variant="body2" color="textSecondary" align="center">
-        {'Copyright ⓒ 전필원 .'+new Date().getFullYear()+'.'}
-      </Typography>
-    </div>
-  );
+              if((typeof startDate)==="string"){
+                startDate = moment(startDate);
+                startTime = moment(startTime);
+                endDate = moment(endDate);
+                endTime = moment(endTime);
+              }
+              
+              const checkToday = (moment().isBetween(startDate, endDate));
+              const checkF = (moment().diff(startDate) < 0);
+              const checkB = (moment().diff(endDate) > 0);
+
+              let fontColor = "black";
+              if(checkToday) fontColor = "blue";
+              if(checkF) fontColor = "grey";
+              if(checkB) fontColor = "red";
+
+              // const checkF = (moment().diff(startDate) < 0);
+              // console.log(checkF, "true면 미래 아이템")
+
+              // const checkB = (moment().diff(endDate) > 0);
+              // console.log(checkB, "true면 과거 아이템")
+
+              return (
+                <ListItem key={idx} role={undefined} dense button>
+                  <ListItemText
+                    primary={title}
+                    style={{color: fontColor}}
+                    secondary={moment(startDate).format("yyyy-MM-DD")+ ' ' +moment(startTime).format("HH:DD")+ ' ~ ' +moment(endDate).format("yyyy-MM-DD")+ ' ' +moment(endTime).format("HH:DD")} />
+                </ListItem>
+              )
+            })}
+        </List>
+        </div>
+        <Typography variant="body2" color="textSecondary" align="center">
+          {"Copyright ⓒ 전필원 " + new Date().getFullYear() + "."}
+        </Typography>
+      </div>
+    );
+  }
 }
-}
+
 export default App;
